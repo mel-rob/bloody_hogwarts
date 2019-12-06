@@ -1,17 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Course, type: :model do
-
-  describe 'validations' do
-    it {should validate_presence_of :name}
-  end
-
-  describe 'relationships' do
-    it {should have_many :student_courses}
-    it {should have_many(:students).through(:student_courses)}
-  end
-
-  it "can count students in class" do
+RSpec.describe "courses index page", type: :feature do
+  before(:each) do
     @student_1 = Student.create(name: "Harry Potter",
                                 age: 12,
                                 house: "Gryffindor")
@@ -30,7 +20,13 @@ RSpec.describe Course, type: :model do
 
     @student_course_4 = StudentCourse.create(student_id: @student_2.id, course_id: @course_1.id)
     @student_course_5 = StudentCourse.create(student_id: @student_2.id, course_id: @course_2.id)
+  end
 
-    expect(@course_1.count).to eq(2)
+  it "shows a list of courses with number of students enrolled" do
+    visit '/courses'
+
+    expect(page).to have_content("Defense against the Dark Arts: 2")
+    expect(page).to have_content("Herbology: 2")
+    expect(page).to have_content("Potions: 1")
   end
 end
